@@ -1,0 +1,44 @@
+!% -SD
+
+Constant Story "MYGAME1";
+Constant Headline "^My first Inform game.^";
+Constant MANUAL_PRONOUNS;
+! Optional, but useful
+Include "Parser";
+Include "VerbLib";
+Include "Replace";
+Include "SmartCantGo";
+! Optional, demo of using a Library package
+
+!------------------------------------------------------------------------------!
+[ Initialise; location = study; "^Welcome!^"; ];
+!------------------------------------------------------------------------------!
+Class   Room
+  with  description "A bare and featureless room.",
+        cant_go [; SmartCantGo(); ],
+          has   light;
+Class   Furniture
+  with  before [;
+              Take,Pull,Push,PushDir:
+                              print_ret (The) self, " is too heavy for that.";
+                ],
+  has   static supporter;
+!------------------------------------------------------------------------------!
+Room study "Your study"
+  with  description "There is a doorway to the east of this austere room.",
+        e_to hallway;
+
+Furniture writing_desk "writing desk" study
+  with  name 'writing' 'desk' 'table',
+        description "The desk...";
+
+Room hallway "Hallway"
+  with  description "The only door in this plain hallway leads back west.",
+        w_to study;
+
+Object axe "rusty axe" hallway
+  with  name 'rusty' 'blunt' 'axe' 'hatchet' 'old',
+        description "It seems old and blunt.";
+!------------------------------------------------------------------------------!
+Include "ItalianG";
+!------------------------------------------------------------------------------!

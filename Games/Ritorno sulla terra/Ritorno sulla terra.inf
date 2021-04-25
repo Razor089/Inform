@@ -1,0 +1,242 @@
+!==================================================
+! Story
+
+Constant Story "Ritorno sulla Terra";
+Constant Headline "^^Una avventura testuale scritta e programmata da^
+                  Cosimo Davide Viggiano.^
+                  mail:     cosimod089@@gmail.com^
+                  facebook: facebook.com/cosimo.davide^^";
+Release 1; Serial "250421";
+
+Replace MakeMatch;
+Replace Identical;
+Replace NounDomain;
+Replace TryGivenObject;
+
+!==================================================
+! Include
+
+Include "Parser";
+Include "pname";
+Include "VerbLib";
+Include "Replace";
+
+!==================================================
+! Classi
+
+Class Room
+  has light;
+
+Class Prop
+  has scenery;
+
+Class Box
+  has scenery container openable lockable;
+!==================================================
+! Stanze
+
+Room sala_criogenica "Sala Criogenica"
+  with description "Il dormitorio della nave, in fondo alla stanza sono allineate le
+                    capsule criogeniche. Sulla parete est ci sono gli armadietti dell'
+                    equipaggio. A sud una porta automatica porta al corridoio centrale
+                    della nave.",
+       alarm true,
+       before [;
+         Listen: if (self.alarm == true) {
+                  print_ret "Senti l'allarme della nave e una voce computerizzata:
+                  'ALLARME! ALLARME! SITUAZIONE...CRITICA!'";
+                }
+                print_ret "Silenzio assoluto rotto occasionalmente dal suono del metallo della
+                          nave che si piega. Non e' per nulla un buon segno...";
+       ],
+  has;
+
+!==================================================
+! Oggetti
+
+Box armadietti "armadietti" sala_criogenica
+  with pname 'armadietti' '.x' 'armadietto',
+       description
+          "Gli armadietti sembrano quasi uscire dalla parete della nave, sono un tutt'uno
+          con il metallo. Ogni armadietto e' uguale eccetto quello del comandante che ha una
+          fessura vicino alla serratura.",
+       before [;
+         Take, PushDir, Push, Pull: print_ret "Impossibile, sono tutt'uno con la parete!";
+       ],
+  has pluralname;
+
+Box armadietto_comandante "armadietto del Comandante" sala_criogenica
+  with pname 'armadietto' '.x' 'del' '.x' 'comandante' 'fessura' 'lettore' 'magnetico',
+       description [;
+        if(self has locked || self hasnt open)
+         print_ret "L'armadietto del comandante, prima di ogni partenza ripone qui dentro i suoi
+                    effetti personali e tutto cio' che ritiene importante. Al lato la fessura sembra un
+                    lettore di schede magnetico.";
+         if (foto in armadietto_comandante && quaderno in armadietto_comandante)
+          print_ret "All'interno dell'armadietto puoi vedere una foto e un quadernetto.";
+         else if (foto in armadietto_comandante)
+          print_ret "All'interno dell'armadietto puoi vedere una foto.";
+         else if (quaderno in armadietto_comandante)
+          print_ret "All'interno dell'armadietto puoi vedere un quadernetto.";
+         else
+          print_ret "L'armadietto del Comandante e' vuoto.";
+       ],
+       before [ks;
+          Open:
+            if(self hasnt locked || badge notin player) {
+              return false;
+            }
+            ks = keep_silent; keep_silent = true;
+            <Unlock self badge>; keep_silent = ks;
+            return true;
+       ],
+       after [ks;
+          Unlock:
+            if (self has locked) return false;
+            print "Inserisci il tesserino del Comandante nella fessura e subito un beep
+                  e un rumore metallico accompagnano l'apertura dell'armadietto.";
+            ks = keep_silent; keep_silent = true;
+            <Open self>; keep_silent = ks;
+            return true;
+       ],
+       with_key badge,
+  has locked;
+
+Object foto "foto" armadietto_comandante
+  with name 'foto' 'fotografia' 'pellicola',
+      description
+        "Ricordi questa foto, l'avete fatta tutti insieme il primo giorno che vi
+        siete imbarcati per la prima volta. Tutti felici, sono passati 3 anni
+        da quel momento. Il Comandante custodiva gelosamente questa foto.",
+has female;
+
+Object quaderno "quadernetto" armadietto_comandante
+  with name 'quaderno' 'fogli' 'appunti' 'quadernetto' 'agenda',
+      description
+        "La vera chiave universale della nave, il quaderno con all'
+        interno tutti i codici di sicurezza per sbloccare qualsiasi cosa.
+        Se finisse nelle mani sbagliate sarebbe una tragedia.",
+has;
+
+Object lampeggiante "lampeggiante" sala_criogenica
+  with name 'lampeggiante' 'luce' 'lampi',
+      description[;
+        if(sala_criogenica.alarm == true){
+          print_ret "I lampi di luce rossa provengono dal lampeggiante sul soffitto, se si e'
+                    attivato allora la situazione e' grave.";
+        }
+        print_ret "Il lampeggiante sul soffitto, e' spento per fortuna. Si accende solo in
+                  casi di estrema emergenza.";
+        ],
+  has scenery;
+
+Prop capsule "capsule criogeniche" sala_criogenica
+  with pname 'capsule' 'criogeniche' 'equipaggio',
+      description
+        "Le capsule criogeniche che ogni nave possiede. Anche se il viaggio spaziale e'
+        diventato molto piu' veloce rispetto al passato, per le lunghe distanze e'
+        necessario il loro utilizzo. La tua capsula e' aperta mentre le restanti sono rimaste chiuse.
+        La capsula del Comandante e' di un bel rosso acceso.",
+  has;
+
+Prop mia_capsule "mia capsula" sala_criogenica
+  with pname '.x' 'capsula' '.x' 'criogenica',
+      description
+        "Qualcosa durante l'avaria ha fatto si' che la tua capsula si aprisse. Al suo
+        interno non trovi nulla.",
+  has female;
+
+Box capsula_comandante "capsula del Comandante" sala_criogenica
+  with pname 'capsula' 'del' 'comandante' 'criogenica',
+      description [;
+        if (self hasnt open){
+          print_ret "La capsula del Comandante della nave, ogni nave ne ha una rossa per identificare
+                    subito l'ufficiale in comando, tuttavia questa e' un nuovo modello, sembra
+                    ci sia qualcosa sotto.";
+        }
+        print_ret "All'interno della capsula puoi vedere il Comandante...non sembra dare segni di vita.";
+        ],
+        before [;
+          LookUnder: print_ret "Sotto alla capsula del Comandante puoi vedere un bottone rosso
+                                con la scritta Apertura Di Emergenza.";
+          Open: if (bottone_capsula.premuto == false) print_ret "Impossibile aprirla con le sole mani ed e' anche molto resistente";
+        ],
+  has female;
+
+Prop bottone_capsula "pulsante di emergenza della capsula" sala_criogenica
+  with name 'bottone' 'emergenza' 'apertura' 'pulsante',
+      description
+        "Il bottone d'emergenza della capsula.",
+        premuto false,
+        before [ks;
+          Push: self.premuto = true;
+            ks = keep_silent; keep_silent = true;
+            <Open capsula_comandante>;
+            keep_silent = false; ks = keep_silent;
+            print_ret "Appena premi il bottone, si sente uno sblocco metallico
+                          e il classico sibilo dell'apertura idraulica della capsula.";
+        ],
+  has;
+
+Object badge "tesserino del Comandante" capsula_comandante
+  with name 'tesserino' 'badge' 'scheda' 'tessera',
+      article "il",
+      description
+        "La tessera magnetica del Comandante, con questa puoi accedere alle aree riservate
+        della nave.",
+  has;
+
+Prop mano "mano del Comandante" capsula_comandante
+  with name 'mano',
+      description [;
+        if(badge in capsula_comandante) {
+          print_ret "Nella mano sembra di vedere una specie di tessera.";
+        } else {
+          print_ret "La mano fredda dell'ormai defunto Comandante.";
+        }
+      ],
+  has;
+
+Prop comandante "Comandante Morgan" capsula_comandante
+  with name 'comandante' 'morgan' 'ufficiale' 'capo',
+      description [;
+        if (self.esaminato == false) {
+          print "Il Comandante Morgan, lo conoscevi da poco ma era il miglior comandante che avessi mai
+            avuto. Sempre ordini giusti, sempre che sapeva cosa fare in qualsiasi situazione. Rispettato
+            da tutto l'equipaggio. Purtroppo come temevi e' morto e una lacrima ti scende sul viso.
+            Ti manchera' la sua compagnia, lui avrebbe saputo subito cosa fare adesso.";
+        } else {
+          print "Il Comandante Morgan, sempre al suo posto.";
+        }
+        self.esaminato = true;
+        if (badge in capsula_comandante){
+          "^^Noti che stringe qualcosa nella mano";
+        }
+        return true;
+        ],
+        esaminato false,
+  has;
+
+!==================================================
+! Routines
+
+[ Initialise;
+ Lookmode = 2;
+ location = sala_criogenica;
+ "Terra - Sistema Solare - Anno 3221^
+ L'umanita' ha conquistato lo spazio, colonizzando altri pianeti, i viaggi spaziali
+ sono all'ordine del giorno cosi' come le nuove rotte commerciali tra pianeti.
+ Il cargo interplanetare a propulsione gravitazionale 'NABUCODONOSOR' si sta avvicinando
+ all'orbita terrestre....^^
+ Ti risvegli di colpo, un suono assordante rimbomba nell'aria, lampi rossi attraversano
+ la stanza. Tenti di muoverti, sembra non succedere nulla poi ti rendi conto che stai
+ fluttuando in assenza di gravita'.^
+ Neanche il tempo di riprendere i sensi che ti senti cadere di colpo e un dolore lancinante
+ alla schiena ti avvisa che la gravita' e' tornata.^
+ In testa un unico pensiero: 'Cosa diavolo sta succedendo?'^^";
+];
+
+!==================================================
+! Lingua
+
+Include "ItalianG";

@@ -1,0 +1,23 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {
+                displayGameInfoWindow = id; 
+                displayNoteWindow = id; 
+                displaySkein = id; 
+                playInFullScreen = id; 
+                reloadGame = id; 
+                restartZMachine = id; 
+                saveMetadata = id; 
+                showGamePreferences = id; 
+                showPreferences = id; 
+                showiFiction = id; 
+            }; 
+            CLASS = FirstResponder; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = ZoomAppDelegate; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+    ); 
+    IBVersion = 1; 
+}

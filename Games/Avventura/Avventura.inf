@@ -1,0 +1,85 @@
+!---------------------------------
+Constant Story "Avventura";
+Constant Headline
+          "^Avventura di prova per esercitarmi con^
+          il linguaggio inform.^
+          Copyright (C) 1999 di Graham Nelson.^
+          Traduzione e adattamenti di Vincenzo Scarpa
+          e Raffaello Valesio (c) 2002-2003 su permesso dell'autore.^^";
+Release 1; Serial "250421";
+!---------------------------------
+! Include
+Include "Parser";
+Include "VerbLib";
+Include "Replace";
+!---------------------------------
+! Classi
+Class Room
+  has light;
+
+Class Box
+  has container open;
+
+Class Prop
+  has scenery;
+!---------------------------------
+! Stanze
+Room foresta "Foresta Nera"
+  with description
+    "Una enorme foresta fitta di alberi con grandi chiome e dal colore
+    verde scuro. Non sai dire quanto grande possa essere la foresta ma
+    di sicuro molto piu' di quello che credi. La foresta e' cosi fitta
+    che al suo interno c'e' un'ombra perenne.
+    ^Sembra che l'unica strada conduca a nord nella foresta...",
+    n_to entrata_foresta,
+    cant_go "Non credi che sia una buona idea andare da quella parte.";
+
+Room entrata_foresta "Entrata della foresta"
+  with description
+    "L'ingresso della foresta, da subito il paesaggio cambia: dietro
+    di te puoi notare visibilmente l'entrata dalla quantita' di luce
+    che entra a differenza di tutto il resto che rimane scuro. Da qui
+    capisci anche il nome di 'Foresta Nera'.",
+    s_to foresta,
+    cant_go "Senza punti di orientamento temi che ti perderai subito,
+            meglio non addentrarsi incautamente nella foresta.";
+
+Prop "alberi"
+  with name 'albero' 'alberi' 'rami' 'chioma' 'chiome' 'foglie' 'foresta',
+       description "A prima vista sembrano delle quercie. Legno forte e robusto
+                   , la loro immensa altezza ti fa capire che e' una foresta
+                   veramente antica. Le chiome sono di un bellissimo verde scuro.",
+       found_in [; return true;],
+  has pluralname;
+
+Object uccellino "uccellino" entrata_foresta
+  with description
+       "Troppo giovane per saper volare, il passerotto pigola inerme.",
+       name 'uccello' 'uccellino' 'passerotto' 'passero' 'volatile' 'creatura',
+       before [;
+         Listen:
+           if (uccellino in nido) print_ret "Trema ancora ma sembra meno spaventato adesso.";
+           print_ret "Sembra spaventato e bisognoso di aiuto.";
+         default:
+           print_ret "Cosi' gli faresti solo del male.";
+       ],
+  has;
+
+Box nido "nido di uccelli" entrata_foresta
+  with description
+       "Il nido e' fatto di rametti e sterpi intrecciati.",
+       name 'nido' 'rametti' 'sterpi',
+  has;
+!---------------------------------
+! Entry point Routines
+
+[ Initialise; location = foresta;
+  lookmode = 2;
+  "^^^Un lampo bianco, un senso di smarrimento e vertigini, di colpo apri gli
+  occhi e spaesato ti ritrovi...^^^";
+];
+
+!---------------------------------
+! Language
+
+Include "ItalianG";
