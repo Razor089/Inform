@@ -38,7 +38,7 @@ Class Box
 Room sala_criogenica "Sala Criogenica"
   with description "Il dormitorio della nave, in fondo alla stanza sono allineate le
                     capsule criogeniche. Sulla parete est ci sono gli armadietti dell'
-                    equipaggio. A sud una porta automatica porta al corridoio centrale
+                    equipaggio. A sud una porta automatica conduce al corridoio centrale
                     della nave.",
        alarm true,
        before [;
