@@ -6,7 +6,7 @@ Constant Headline "^^Una avventura testuale scritta e programmata da^
                   Cosimo Davide Viggiano.^
                   mail:     cosimod089@@gmail.com^
                   facebook: facebook.com/cosimo.davide^^";
-Release 1; Serial "250421";
+Release 1; Serial "260421";
 
 Replace MakeMatch;
 Replace Identical;
@@ -17,6 +17,22 @@ Replace TryGivenObject;
 ! Include
 
 Include "Parser";
+!--------------------------------------------------
+! Verbi personalizzati
+
+Object LibraryMessages
+  with before [;
+    Jump, Sing: print_ret "In una situazione del genere e' l'ultima cosa a cui pensi.";
+    Sleep: print_ret "Ti sei appena risvegliato dal sonno criogenico, sei pieno di energia";
+    Pray: print_ret "Hai visto tante cose e Dio non e' una di queste.";
+    Smell: print_ret "L'aria sembra pulita fortunatamente i depuratori di ossigeno funzionano ancora.";
+    Miscellany:
+      if(lm_n == 19){
+        "Indossi la tuta per il sonno criogenico, e' elastica e comoda ma non adatta
+        alla vita di tutti i giorni.";
+      }
+  ];
+!--------------------------------------------------
 Include "pname";
 Include "VerbLib";
 Include "Replace";
@@ -71,15 +87,34 @@ Room corridoio "Corridoio Centrale"
 ! Oggetti
 
 Box armadietti "armadietti" sala_criogenica
-  with pname 'armadietti' '.x' 'armadietto',
+  with pname 'armadietti',
        description
           "Gli armadietti sembrano quasi uscire dalla parete della nave, sono un tutt'uno
           con il metallo. Ogni armadietto e' uguale eccetto quello del comandante che ha una
           fessura vicino alla serratura.",
        before [;
          Take, PushDir, Push, Pull: print_ret "Impossibile, sono tutt'uno con la parete!";
+         Lock: "Questi armadietti non hanno sistemi di blocco.";
        ],
   has pluralname;
+
+!Box mio_armadietto "mio armadietto" sala_criogenica
+!  with pname 'mio' 'armadietto' 'personale',
+!      description "Il mio armadietto personale, non ha nulla di speciale rispetto
+!                  agli altri. Tranne che per quello del Comandante.",
+!      before [;
+!        Take, PushDir, Push, Pull: print_ret "Impossibile, e' tutt'uno con la parete!";
+!        Lock: "Come tutti gli armadietti dell'equipaggio, anche questo non ha sistemi di blocco.";
+!      ],
+!  has;
+
+Object tuta_spaziale "tuta spaziale" armadietti
+  with name 'tuta' 'spaziale',
+      article "la tua",
+      description
+        "La tua tuta spaziale per le operazioni EVA. ^A differenza delle vecchie tute
+        , piu' simili ad antichi scafandri, queste sono molto piu' leggere e piccole.",
+  has clothing female;
 
 Box armadietto_comandante "armadietto del Comandante" sala_criogenica
   with pname 'armadietto' '.x' 'del' '.x' 'comandante' 'fessura' 'lettore' 'magnetico',
