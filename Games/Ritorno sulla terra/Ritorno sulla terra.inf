@@ -30,6 +30,9 @@ Class Room
 Class Prop
   has scenery;
 
+Class Porta
+  has scenery lockable door openable female locked;
+
 Class Box
   has scenery container openable lockable;
 !==================================================
@@ -48,7 +51,20 @@ Room sala_criogenica "Sala Criogenica"
                 }
                 print_ret "Silenzio assoluto rotto occasionalmente dal suono del metallo della
                           nave che si piega. Non e' per nulla un buon segno...";
+         Go:
+          if(noun == w_to && porta_dormitorio has locked) print_ret "Il portellone della sala criogenica non si apre e' sigillato.";
+          if(noun == w_to && porta_dormitorio hasnt locked) playerTo(corridoio);
        ],
+       w_to porta_dormitorio,
+  has;
+
+Room corridoio "Corridoio Centrale"
+  with description "Il corridoio centrale della nave, puoi immaginarlo come la spine dorsale di
+                    tutta la nave. A sud continua verso i motori, a nord un portellone conduce
+                    alla cabina di comando, a est c'e' la sala criogenica a ovest c'e' la sala da
+                    pranzo",
+      e_to porta_dormitorio,
+      each_turn [; if (player in self) deadflag = 2;],
   has;
 
 !==================================================
@@ -94,7 +110,7 @@ Box armadietto_comandante "armadietto del Comandante" sala_criogenica
           Unlock:
             if (self has locked) return false;
             print "Inserisci il tesserino del Comandante nella fessura e subito un beep
-                  e un rumore metallico accompagnano l'apertura dell'armadietto.";
+                  e un rumore metallico accompagnano l'apertura dell'armadietto.^^";
             ks = keep_silent; keep_silent = true;
             <Open self>; keep_silent = ks;
             return true;
@@ -111,7 +127,7 @@ Object foto "foto" armadietto_comandante
 has female;
 
 Object quaderno "quadernetto" armadietto_comandante
-  with name 'quaderno' 'fogli' 'appunti' 'quadernetto' 'agenda',
+  with name 'quaderno' 'fogli' 'appunti' 'quadernetto' 'agenda' 'codice' 'codici',
       description
         "La vera chiave universale della nave, il quaderno con all'
         interno tutti i codici di sicurezza per sbloccare qualsiasi cosa.
@@ -215,6 +231,95 @@ Prop comandante "Comandante Morgan" capsula_comandante
         return true;
         ],
         esaminato false,
+  has;
+
+Prop pannello "pannello di controllo" sala_criogenica
+  with name 'pannello' 'di' 'controllo' 'schermo',
+      description
+        "Il pannello di controllo della porta, per ragioni di sicurezza ogni porta ne ha uno.
+        Sfortunatamente solo il comandante puo' accedervi con il suo tesserino.",
+        before [ks;
+           Open:
+             if(self hasnt locked || badge notin player) {
+               return false;
+             }
+             ks = keep_silent; keep_silent = true;
+             <Unlock self badge>; keep_silent = ks;
+             return true;
+        ],
+        after [ks;
+           Unlock:
+             if (self has locked) return false;
+             print "Inserisci il tesserino del Comandante nella fessura e il portellino del pannello
+                    si apre di scatto rivelando al suo interno un tastierino numerico.^^";
+             ks = keep_silent; keep_silent = true;
+             <Open self>; keep_silent = ks;
+             tastiera.visible = true;
+             return true;
+        ],
+      with_key badge,
+  has container openable lockable locked;
+
+Prop tastiera "tastierino numerico" pannello
+  with name 'tastiera' 'tasti' 'tastierino' 'numerico' 'tastini' 'pulsanti',
+      description
+        "Il tastierino numerico che serve per inserire il codice di sblocco della porta.
+        Solo il Comandante e' a conoscenza di questi codici.",
+      before [;
+        Insert, Receive:
+          if(quaderno in player && noun == quaderno) {
+            <Open porta_dormitorio quaderno>;
+            return true;
+          }
+          print_ret "Le tenti tutte ma non succede nulla.";
+      ],
+      visible false,
+  has container open;
+
+Porta porta_dormitorio "porta della Sala Criogenica"
+  with name 'porta' 'automatica' 'scorrevole' 'blindata' 'tagliafuoco' 'portellone' 'cilindri' 'cilindro',
+    description [;
+      if(location == corridoio)
+        print "Il portellone blindato che conduce alla Sala Criogenica";
+      if(location == sala_criogenica)
+        print "Il portellone blindato conduce al corridoio della nave";
+      print "Vicino al portello puoi vedere un pannello di controllo lampeggiare.";
+      if(porta_dormitorio has locked)
+        print "^^ I cilindri di sicurezza sono sigillati, la porta e' bloccata.";
+      return true;
+    ],
+    before [ks;
+      Open: if(self hasnt locked || quaderno notin player) {
+              return false;
+            }
+            print    "Inserisci nel tastierino numerico il codice di sblocco che trovi
+                      all'interno del quaderno del Comandante.^
+                      Subito uno ad uno i cilindri di sicurezza escono fuori sbloccando la porta.^^";
+            ks = keep_silent; keep_silent = true;
+            <Unlock self quaderno>; keep_silent = ks;
+            return true;
+      Unlock: if(tastiera.visible == false) {
+                print_ret "Non vedi come potresti.";
+              }
+              return false;
+    ],
+    after [ks;
+      Unlock:
+        if(self hasnt locked) return false;
+        ks = keep_silent; keep_silent = true;
+        <Open self>; keep_silent = ks;
+        return true;
+    ],
+    door_dir [;
+      if(location == corridoio) return e_to;
+      if(location == sala_criogenica) return w_to;
+    ],
+    door_to [;
+      if(location == corridoio) return sala_criogenica;
+      if(location == sala_criogenica) return corridoio;
+    ],
+    found_in sala_criogenica corridoio,
+    with_key quaderno,
   has;
 
 !==================================================
