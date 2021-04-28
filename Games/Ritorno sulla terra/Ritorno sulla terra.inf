@@ -28,8 +28,12 @@ Object LibraryMessages
     Smell: print_ret "L'aria sembra pulita fortunatamente i depuratori di ossigeno funzionano ancora.";
     Miscellany:
       if(lm_n == 19){
-        "Indossi la tuta per il sonno criogenico, e' elastica e comoda ma non adatta
-        alla vita di tutti i giorni.";
+        if(tuta_spaziale has worn)
+          "Con la tuta spaziale indosso sei pronto per affrontare i pericoli dello
+           spazio siderale.";
+        else
+          "Indossi la tuta per il sonno criogenico, e' elastica e comoda ma non adatta
+          alla vita di tutti i giorni.";
       }
   ];
 !--------------------------------------------------
@@ -57,7 +61,7 @@ Class Box
 Room sala_criogenica "Sala Criogenica"
   with description "Il dormitorio della nave, in fondo alla stanza sono allineate le
                     capsule criogeniche. Sulla parete est ci sono gli armadietti dell'
-                    equipaggio. A sud una porta automatica conduce al corridoio centrale
+                    equipaggio. A ovest una porta automatica conduce al corridoio centrale
                     della nave.",
        alarm true,
        before [;
@@ -72,6 +76,7 @@ Room sala_criogenica "Sala Criogenica"
           if(noun == w_to && porta_dormitorio hasnt locked) playerTo(corridoio);
        ],
        w_to porta_dormitorio,
+       cant_go "La sala criogenica ha solo una entrata ad ovest della stanza.",
   has;
 
 Room corridoio "Corridoio Centrale"
@@ -97,16 +102,6 @@ Box armadietti "armadietti" sala_criogenica
          Lock: "Questi armadietti non hanno sistemi di blocco.";
        ],
   has pluralname;
-
-!Box mio_armadietto "mio armadietto" sala_criogenica
-!  with pname 'mio' 'armadietto' 'personale',
-!      description "Il mio armadietto personale, non ha nulla di speciale rispetto
-!                  agli altri. Tranne che per quello del Comandante.",
-!      before [;
-!        Take, PushDir, Push, Pull: print_ret "Impossibile, e' tutt'uno con la parete!";
-!        Lock: "Come tutti gli armadietti dell'equipaggio, anche questo non ha sistemi di blocco.";
-!      ],
-!  has;
 
 Object tuta_spaziale "tuta spaziale" armadietti
   with name 'tuta' 'spaziale',
@@ -167,7 +162,7 @@ Object quaderno "quadernetto" armadietto_comandante
         "La vera chiave universale della nave, il quaderno con all'
         interno tutti i codici di sicurezza per sbloccare qualsiasi cosa.
         Se finisse nelle mani sbagliate sarebbe una tragedia.",
-has;
+  has;
 
 Object lampeggiante "lampeggiante" sala_criogenica
   with name 'lampeggiante' 'luce' 'lampi',
@@ -272,7 +267,8 @@ Prop pannello "pannello di controllo" sala_criogenica
   with name 'pannello' 'di' 'controllo' 'schermo',
       description
         "Il pannello di controllo della porta, per ragioni di sicurezza ogni porta ne ha uno.
-        Sfortunatamente solo il comandante puo' accedervi con il suo tesserino.",
+        Sfortunatamente solo il comandante puo' accedervi con il suo tesserino.
+        Sul display lampeggiante puoi leggere 'BLOCCO DI SICUREZZA ATTIVO'",
         before [ks;
            Open:
              if(self hasnt locked || badge notin player) {
@@ -315,17 +311,18 @@ Porta porta_dormitorio "porta della Sala Criogenica"
   with name 'porta' 'automatica' 'scorrevole' 'blindata' 'tagliafuoco' 'portellone' 'cilindri' 'cilindro',
     description [;
       if(location == corridoio)
-        print "Il portellone blindato che conduce alla Sala Criogenica";
+        print "Il portellone blindato che conduce alla Sala Criogenica.";
       if(location == sala_criogenica)
-        print "Il portellone blindato conduce al corridoio della nave";
-      print "Vicino al portello puoi vedere un pannello di controllo lampeggiare.";
+        print "Il portellone blindato conduce al corridoio della nave.";
+      print "^Vicino al portello puoi vedere un pannello di controllo lampeggiare.";
       if(porta_dormitorio has locked)
         print "^^ I cilindri di sicurezza sono sigillati, la porta e' bloccata.";
       return true;
     ],
     before [ks;
       Open: if(self hasnt locked || quaderno notin player) {
-              return false;
+              print_ret "Il portellone e' automatizzato, ma avvicinandoti non si apre,
+                        e' bloccato in qualche modo.";
             }
             print    "Inserisci nel tastierino numerico il codice di sblocco che trovi
                       all'interno del quaderno del Comandante.^
