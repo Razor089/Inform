@@ -73,19 +73,26 @@ Room sala_criogenica "Sala Criogenica"
                           nave che si piega. Non e' per nulla un buon segno...";
          Go:
           if(noun == w_to && porta_dormitorio has locked) print_ret "Il portellone della sala criogenica non si apre e' sigillato.";
-          if(noun == w_to && porta_dormitorio hasnt locked) playerTo(corridoio);
+          if(noun == w_to && porta_dormitorio hasnt locked) playerTo(corridoio); return true;
        ],
        w_to porta_dormitorio,
        cant_go "La sala criogenica ha solo una entrata ad ovest della stanza.",
   has;
 
+  Room sala_comando "Sala Comando"
+    with description "La sala comando della Nabucodonosor, il cervello della nave. Davanti a te c'e' la grande vetrata che
+                      da sullo spazio profondo. Subito prima della vetrata c'e' la consolle con i
+                      computer di bordo collegati al mainframe principale. Tutto il resto della sala e' piena di schermi
+                      e comandi vari.",
+    has;
+
 Room corridoio "Corridoio Centrale"
   with description "Il corridoio centrale della nave, puoi immaginarlo come la spine dorsale di
-                    tutta la nave. A sud continua verso i motori, a nord un portellone conduce
-                    alla cabina di comando, a est c'e' la sala criogenica a ovest c'e' la sala da
+                    tutta la nave. A sud continua verso i motori, a nord il corridoio conduce
+                    alla sala di comando, a est c'e' la sala criogenica a ovest c'e' la sala da
                     pranzo",
       e_to porta_dormitorio,
-      each_turn [; if (player in self) deadflag = 2;],
+      n_to sala_comando,
   has;
 
 !==================================================
@@ -344,11 +351,11 @@ Porta porta_dormitorio "porta della Sala Criogenica"
     ],
     door_dir [;
       if(location == corridoio) return e_to;
-      if(location == sala_criogenica) return w_to;
+      else if(location == sala_criogenica) return w_to;
     ],
     door_to [;
       if(location == corridoio) return sala_criogenica;
-      if(location == sala_criogenica) return corridoio;
+      else if(location == sala_criogenica) return corridoio;
     ],
     found_in sala_criogenica corridoio,
     with_key quaderno,
