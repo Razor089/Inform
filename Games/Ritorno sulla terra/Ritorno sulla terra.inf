@@ -6,7 +6,7 @@ Constant Headline "^^Una avventura testuale scritta e programmata da^
                   Cosimo Davide Viggiano.^
                   mail:     cosimod089@@gmail.com^
                   facebook: facebook.com/cosimo.davide^^";
-Release 1; Serial "260421";
+Release 1; Serial "290421";
 
 Replace MakeMatch;
 Replace Identical;
@@ -97,6 +97,23 @@ Room corridoio "Corridoio Centrale"
 
 !==================================================
 ! Oggetti
+
+Prop computer "computer di bordo" sala_comando
+  with name 'computer' 'di' 'bordo' 'calcolatore' 'macchina',
+      article "il",
+      description [;
+        print "Il computer di bordo. Da qui si comanda tutta la nave, si possono interrogare tutti i sistemi
+              controllare le sezioni della nave. Impostare la rotta e guidare anche manualmente la nave.";
+        if(spento)
+          print_ret "^^Il computer e' spento.";
+        else
+          print_ret "^^Sullo schermo ci sono informazioni sullo stato della nave";
+      ],
+      before [;
+        
+      ],
+      spento true,
+  has;
 
 Box armadietti "armadietti" sala_criogenica
   with pname 'armadietti',
