@@ -6,7 +6,7 @@ Constant Headline "^^Una avventura testuale scritta e programmata da^
                   Cosimo Davide Viggiano.^
                   mail:     cosimod089@@gmail.com^
                   facebook: facebook.com/cosimo.davide^^";
-Release 1; Serial "260421";
+Release 1; Serial "290421";
 
 Replace MakeMatch;
 Replace Identical;
@@ -84,6 +84,9 @@ Room sala_criogenica "Sala Criogenica"
                       da sullo spazio profondo. Subito prima della vetrata c'e' la consolle con i
                       computer di bordo collegati al mainframe principale. Tutto il resto della sala e' piena di schermi
                       e comandi vari.",
+        each_turn [;
+          if (player in self) Deadflag = 2;
+        ],
     has;
 
 Room corridoio "Corridoio Centrale"
@@ -97,6 +100,23 @@ Room corridoio "Corridoio Centrale"
 
 !==================================================
 ! Oggetti
+
+Prop computer "computer di bordo" sala_comando
+  with name 'computer' 'di' 'bordo' 'calcolatore' 'macchina',
+      article "il",
+      description [;
+        print "Il computer di bordo. Da qui si comanda tutta la nave, si possono interrogare tutti i sistemi
+              controllare le sezioni della nave. Impostare la rotta e guidare anche manualmente la nave.";
+        if(spento)
+          print_ret "^^Il computer e' spento.";
+        else
+          print_ret "^^Sullo schermo ci sono informazioni sullo stato della nave";
+      ],
+      before [;
+
+      ],
+      spento true,
+  has;
 
 Box armadietti "armadietti" sala_criogenica
   with pname 'armadietti',
@@ -237,6 +257,10 @@ Object badge "tesserino del Comandante" capsula_comandante
       description
         "La tessera magnetica del Comandante, con questa puoi accedere alle aree riservate
         della nave.",
+        after [;
+          Take: print_ret "Con cautela e delicatezza, quasi a non voler svegliare il Comandante,
+                          apri le dita della mano, estrendo il suo tesserino.";
+        ],
   has;
 
 Prop mano "mano del Comandante" capsula_comandante
@@ -271,7 +295,7 @@ Prop comandante "Comandante Morgan" capsula_comandante
   has;
 
 Prop pannello "pannello di controllo" sala_criogenica
-  with name 'pannello' 'di' 'controllo' 'schermo',
+  with name 'pannello' 'di' 'controllo' 'schermo' 'display',
       description
         "Il pannello di controllo della porta, per ragioni di sicurezza ogni porta ne ha uno.
         Sfortunatamente solo il comandante puo' accedervi con il suo tesserino.
