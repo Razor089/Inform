@@ -73,7 +73,7 @@ Room sala_criogenica "Sala Criogenica"
                           nave che si piega. Non e' per nulla un buon segno...";
          Go:
           if(noun == w_to && porta_dormitorio has locked) print_ret "Il portellone della sala criogenica non si apre e' sigillato.";
-          if(noun == w_to && porta_dormitorio hasnt locked) playerTo(corridoio); return true;
+          if(noun == w_to && porta_dormitorio hasnt locked) { playerTo(corridoio); return true; }
        ],
        w_to porta_dormitorio,
        cant_go "La sala criogenica ha solo una entrata ad ovest della stanza.",
@@ -101,6 +101,8 @@ Room corridoio "Corridoio Centrale"
 !==================================================
 ! Oggetti
 
+!--------------------------------------------------
+! Sala Comando
 Prop computer "computer di bordo" sala_comando
   with name 'computer' 'di' 'bordo' 'calcolatore' 'macchina',
       article "il",
@@ -118,6 +120,18 @@ Prop computer "computer di bordo" sala_comando
       spento true,
   has;
 
+Prop vetrata "vetrata" sala_comando
+  with name 'vetrata' 'vetro',
+      article "la",
+      description
+        "La grande vetrata che va da un lato all'altro della stanza, come un immenso parabrezza permette di vedere
+        l'immenso spettacolo che offre lo spazio.^^
+        Riempiendo tutta la visuale, oltre la vetrata, si staglia la Terra. Il pianeta blu, culla della razza
+        umana, dalla distanza noti che la nave dovrebbe essere in fase di rientro.",
+  has female;
+
+!---------------------------------------------------
+! Sala Criogenica
 Box armadietti "armadietti" sala_criogenica
   with pname 'armadietti',
        description
