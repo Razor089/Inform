@@ -51,7 +51,7 @@ Class Prop
   has scenery;
 
 Class Porta
-  has scenery lockable door openable female locked;
+  has scenery static lockable door openable locked;
 
 Class Box
   has scenery container openable lockable;
@@ -96,6 +96,17 @@ Room corridoio "Corridoio Centrale"
                     pranzo",
       e_to porta_dormitorio,
       n_to sala_comando,
+      s_to portello_motori,
+  has;
+
+Room sala_motori "Sala Motori"
+  with description "La sala motori e' l'ambiente piu' grande della nave. Al suo interno ospita il gigantesco
+                    motore a gravitazione. La stanza e' rotonda, al centro vi e' il cilindro che va dal pavimento
+                    al soffitto nel quale il motore puo' funzionare senza problemi. Tutto intorno vi sono cavi
+                    di alimentazione che vanno da e verso il motore e anche degli scomparti piu piccoli collegati
+                    anche essi al motore della nave. A nord il portellone da verso il corridoio.",
+      n_to corridoio,
+      cant_go "La sala non ha altre uscite.",
   has;
 
 !==================================================
@@ -353,7 +364,7 @@ Prop tastiera "tastierino numerico" pannello
   has container open;
 
 Porta porta_dormitorio "porta della Sala Criogenica"
-  with name 'porta' 'automatica' 'scorrevole' 'blindata' 'tagliafuoco' 'portellone' 'cilindri' 'cilindro',
+  with pname 'porta' 'automatica' 'scorrevole' 'blindata' 'tagliafuoco' 'portellone' 'cilindri' 'cilindro' 'criogenica',
     description [;
       if(location == corridoio)
         print "Il portellone blindato che conduce alla Sala Criogenica.";
@@ -397,6 +408,31 @@ Porta porta_dormitorio "porta della Sala Criogenica"
     ],
     found_in sala_criogenica corridoio,
     with_key quaderno,
+  has female;
+!--------------------------------------------------
+! Corridoio
+
+Porta portello_motori "portellone sala motori"
+  with description [;
+    if(self in corridoio){
+      print_ret "Il portellone di metallo che conduce alla sala motori.";
+    }
+    if(self in sala_motori) {
+      print_ret "Il portellone di metallo che conduce al corridoio.";
+    }
+  ],
+      pname '.x' 'portellone' '.x' 'porta' 'motori' '.x' 'automatica',
+      when_closed "Ti avvicini ma il portellone automatico non sembra aprirsi.",
+      when_open "Il portellone adeso e' sbloccato e si apre normalmente.",
+      found_in corridoio sala_motori,
+      door_to [;
+        if(self in corridoio) return sala_motori;
+        if(self in sala_motori) return corridoio;
+      ],
+      door_dir [;
+        if(self in corridoio) return s_to;
+        if(self in sala_motori) return n_to;
+      ],
   has;
 
 !==================================================
