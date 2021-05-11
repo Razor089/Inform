@@ -172,7 +172,7 @@ Prop computer "computer di bordo" sala_comando
                         Perdita di potenza imminente, motori spenti.
                         Impossibile riattivare in remoto.
                         Necessarie operazioni manuali.^";
-            'sblocco porte': "^Tutte le porte della nave sono state sbloccate.^";
+            'sblocca': "^Tutte le porte della nave sono state sbloccate.^";
             default: "Non hai trovato niente su questo.";
           }
         } else {
