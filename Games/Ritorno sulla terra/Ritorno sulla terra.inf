@@ -6,7 +6,7 @@ Constant Headline "^^Una avventura testuale scritta e programmata da^
                   Cosimo Davide Viggiano.^
                   mail:     cosimod089@@gmail.com^
                   facebook: facebook.com/cosimo.davide^^";
-Release 1; Serial "290421";
+Release 1; Serial "110521";
 
 Replace MakeMatch;
 Replace Identical;
@@ -138,6 +138,41 @@ Prop computer "computer di bordo" sala_comando
           switch(glyph)
           {
             'motori': "^ATTENZIONE! MOTORI IN AVARIA! STATO: SPENTI.^";
+            'status','diagnostica','stato':
+                      "^Nave: NABUCODONOSOR^
+                        N.ro di Serie: 4573FG23JO^
+                        Anno di produzione: 3210^
+                        Comandante: Morgan Never^
+                        Tipologia: Cargo/Trasporto^
+                        N.ro equipaggio: 6^
+                        Rotta: Rientro sulla terra^^
+
+                        Richiesta aggiornamenti...^
+                        FALLITO!^^
+
+                        Richiesta contatto con la terra...^
+                        FALLITO!^^
+
+                        Lancio diagnostica...^
+                        AVARIA AI MOTORI!^
+                        COMUNICAZIONI....... DISABILITATE.^
+                        COMANDI AUTOMATICI.. OFFLINE.^
+                        COMANDI MANUALI..... OFFLINE.^
+                        POTENZA AL 30%...... IN DIMINUZIONE.^
+                        SCAFO............... COMPROMESSO.^^
+
+                        Si prega di risolvere al piu' presto^
+                        le criticita' della nave.
+                        ^";
+            'rotta': "^La rotta attuale della nave e' verso la terra.
+                      ATTENZIONE! Angolo di avvicinamento troppo ripido.
+                      Aggiustare rotta, la nave non resistera' al rientro in
+                      atmosfera.^";
+            'avaria': "^L'avaria e' circoscritta alla zona dei motori.
+                        Perdita di potenza imminente, motori spenti.
+                        Impossibile riattivare in remoto.
+                        Necessarie operazioni manuali.^";
+            'sblocco porte': "^Tutte le porte della nave sono state sbloccate.^";
             default: "Non hai trovato niente su questo.";
           }
         } else {
