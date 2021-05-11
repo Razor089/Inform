@@ -85,7 +85,7 @@ Room sala_criogenica "Sala Criogenica"
                       computer di bordo collegati al mainframe principale. Tutto il resto della sala e' piena di schermi
                       e comandi vari.",
         each_turn [;
-          if (player in self) Deadflag = 2;
+          !if (player in self) Deadflag = 2;
         ],
     has;
 
@@ -120,16 +120,42 @@ Prop computer "computer di bordo" sala_comando
       description [;
         print "Il computer di bordo. Da qui si comanda tutta la nave, si possono interrogare tutti i sistemi
               controllare le sezioni della nave. Impostare la rotta e guidare anche manualmente la nave.";
-        if(spento)
+        if(self hasnt on)
           print_ret "^^Il computer e' spento.";
         else
           print_ret "^^Sullo schermo ci sono informazioni sullo stato della nave";
       ],
-      before [;
-
+      before [w1 w2 glyph;
+        Consult:
+        if(self has on){
+          wn = consult_from;
+          w1 = NextWord(); ! First Word
+          w2 = NextWord(); ! Second Word
+          if (consult_words == 1 && w1 ~= 'info' or 'informazioni') glyph = w1;
+          else if (consult_words == 2 && w1 == 'status') glyph = w2;
+          else if (consult_words == 2 && w2 == 'status') glyph = w1;
+          else "Forse dovresti provare ~cerca <VOCE> nel computer~.";
+          switch(glyph)
+          {
+            'motori': "^ATTENZIONE! MOTORI IN AVARIA! STATO: SPENTI.^";
+            default: "Non hai trovato niente su questo.";
+          }
+        } else {
+          print_ret "Il computer e' spento.";
+        }
       ],
-      spento true,
-  has;
+      after [;
+        SwitchOn:
+          print "Lo schermo inizia a lampeggiare per un breve momento, poi compare il cursore in attesa di
+                comandi.";
+          give self on;
+          return true;
+        SwitchOff:
+          print "Il computer esegue la procedura di arresto e si spegne.";
+          give self ~on;
+          return true;
+      ],
+  has switchable;
 
 Prop vetrata "vetrata" sala_comando
   with name 'vetrata' 'vetro',
