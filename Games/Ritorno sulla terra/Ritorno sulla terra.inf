@@ -135,46 +135,92 @@ Prop computer "computer di bordo" sala_comando
           else if (consult_words == 2 && w1 == 'status') glyph = w2;
           else if (consult_words == 2 && w2 == 'status') glyph = w1;
           else "Forse dovresti provare ~cerca <VOCE> nel computer~.";
-          switch(glyph)
-          {
-            'motori': "^ATTENZIONE! MOTORI IN AVARIA! STATO: SPENTI.^";
-            'status','diagnostica','stato':
-                      "^Nave: NABUCODONOSOR^
-                        N.ro di Serie: 4573FG23JO^
-                        Anno di produzione: 3210^
-                        Comandante: Morgan Never^
-                        Tipologia: Cargo/Trasporto^
-                        N.ro equipaggio: 6^
-                        Rotta: Rientro sulla terra^^
 
-                        Richiesta aggiornamenti...^
-                        FALLITO!^^
+          if(glyph == 'motori' or 'motore')
+            "^ATTENZIONE! MOTORI IN AVARIA! STATO: SPENTI.^";
+          else if(glyph == 'status' or 'diagnostica' or 'stato')
+            "^Nave: NABUCODONOSOR^
+              N.ro di Serie: 4573FG23JO^
+              Anno di produzione: 3210^
+              Comandante: Morgan Never^
+              Tipologia: Cargo/Trasporto^
+              N.ro equipaggio: 6^
+              Rotta: Rientro sulla terra^^
 
-                        Richiesta contatto con la terra...^
-                        FALLITO!^^
+              Richiesta aggiornamenti...^
+              FALLITO!^^
 
-                        Lancio diagnostica...^
-                        AVARIA AI MOTORI!^
-                        COMUNICAZIONI....... DISABILITATE.^
-                        COMANDI AUTOMATICI.. OFFLINE.^
-                        COMANDI MANUALI..... OFFLINE.^
-                        POTENZA AL 30%...... IN DIMINUZIONE.^
-                        SCAFO............... COMPROMESSO.^^
+              Richiesta contatto con la terra...^
+              FALLITO!^^
 
-                        Si prega di risolvere al piu' presto^
-                        le criticita' della nave.
-                        ^";
-            'rotta': "^La rotta attuale della nave e' verso la terra.
-                      ATTENZIONE! Angolo di avvicinamento troppo ripido.
-                      Aggiustare rotta, la nave non resistera' al rientro in
-                      atmosfera.^";
-            'avaria': "^L'avaria e' circoscritta alla zona dei motori.
-                        Perdita di potenza imminente, motori spenti.
-                        Impossibile riattivare in remoto.
-                        Necessarie operazioni manuali.^";
-            'sblocca': "^Tutte le porte della nave sono state sbloccate.^";
-            default: "Non hai trovato niente su questo.";
-          }
+              Lancio diagnostica...^
+              AVARIA AI MOTORI!^
+              COMUNICAZIONI....... DISABILITATE.^
+              COMANDI AUTOMATICI.. OFFLINE.^
+              COMANDI MANUALI..... OFFLINE.^
+              POTENZA AL 30%...... IN DIMINUZIONE.^
+              SCAFO............... COMPROMESSO.^^
+
+              Si prega di risolvere al piu' presto^
+              le criticita' della nave.
+              ^";
+          else if(glyph == 'rotta' or 'destinazione' or 'direzione')
+            "^La rotta attuale della nave e' verso la terra.^
+            ATTENZIONE! Angolo di avvicinamento troppo ripido^.
+            Aggiustare rotta, la nave non resistera' al rientro in
+            atmosfera.^";
+          else if(glyph == 'avaria')
+            "^ANALISI IN CORSO...^^
+              L'avaria e' circoscritta alla zona dei motori.^
+              Perdita di potenza imminente, motori spenti.^
+              Impossibile riattivare in remoto.^
+              Necessarie operazioni manuali.^";
+          else if(consult_words == 3 && w1 == 'sblocco' or 'sblocca' or 'apri' && w2 == 'porte' or 'portelloni' or 'porta' or 'portellone')
+            "^Tutte le porte della nave sono state sbloccate.^";
+          else
+            "Non hai trovato niente su questo.";
+
+          !switch(glyph)
+          !{
+          !  'motori', 'motore': "^ATTENZIONE! MOTORI IN AVARIA! STATO: SPENTI.^";
+          !  'status','diagnostica','stato':
+          !            "^Nave: NABUCODONOSOR^
+          !              N.ro di Serie: 4573FG23JO^
+          !              Anno di produzione: 3210^
+          !              Comandante: Morgan Never^
+          !              Tipologia: Cargo/Trasporto^
+          !              N.ro equipaggio: 6^
+          !              Rotta: Rientro sulla terra^^
+
+!                        Richiesta aggiornamenti...^
+!                        FALLITO!^^
+!
+!                        Richiesta contatto con la terra...^
+!                        FALLITO!^^
+
+!                        Lancio diagnostica...^
+!                        AVARIA AI MOTORI!^
+!                        COMANDI AUTOMATICI.. OFFLINE.^
+!                        COMANDI MANUALI..... OFFLINE.^
+!                        POTENZA AL 30%...... IN DIMINUZIONE.^
+!                        SCAFO............... COMPROMESSO.^^
+!
+!                        Si prega di risolvere al piu' presto^
+!                        le criticita' della nave.
+!                        ^";
+!            'rotta', 'destinazione':
+!                      "^La rotta attuale della nave e' verso la terra.^
+!                      ATTENZIONE! Angolo di avvicinamento troppo ripido^.
+!                      Aggiustare rotta, la nave non resistera' al rientro in
+!                      atmosfera.^";
+!            'avaria': "^ANALISI IN CORSO...^^
+!                        L'avaria e' circoscritta alla zona dei motori.^
+!                        Perdita di potenza imminente, motori spenti.^
+!                        Impossibile riattivare in remoto.^
+!                        Necessarie operazioni manuali.^";
+!            'sblocca': "^Tutte le porte della nave sono state sbloccate.^";
+!            default: "Non hai trovato niente su questo.";
+!          }
         } else {
           print_ret "Il computer e' spento.";
         }
