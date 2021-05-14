@@ -4,7 +4,7 @@
 Constant Story "Ritorno sulla Terra";
 Constant Headline "^^Una avventura testuale scritta e programmata da^
                   Cosimo Davide Viggiano.^
-                  mail:     cosimod089@@gmail.com^
+                  mail:     cosimod089@@64gmail.com^
                   facebook: facebook.com/cosimo.davide^^";
 Release 1; Serial "110521";
 
@@ -136,10 +136,17 @@ Prop computer "computer di bordo" sala_comando
           else if (consult_words == 2 && w2 == 'status') glyph = w1;
           else "Forse dovresti provare ~cerca <VOCE> nel computer~.";
 
-          if(glyph == 'motori' or 'motore')
-            "^ATTENZIONE! MOTORI IN AVARIA! STATO: SPENTI.^";
-          else if(glyph == 'status' or 'diagnostica' or 'stato')
-            "^Nave: NABUCODONOSOR^
+          if(glyph == 'motori' or 'motore') {
+            font off;
+            style underline;
+            print"^ATTENZIONE! MOTORI IN AVARIA! STATO: SPENTI.^";
+            font on;
+            return true;
+          }
+          else if(glyph == 'status' or 'diagnostica' or 'stato') {
+            font off;
+            style underline;
+            print "^Nave: NABUCODONOSOR^
               N.ro di Serie: 4573FG23JO^
               Anno di produzione: 3210^
               Comandante: Morgan Never^
@@ -164,21 +171,40 @@ Prop computer "computer di bordo" sala_comando
               Si prega di risolvere al piu' presto^
               le criticita' della nave.
               ^";
-          else if(glyph == 'rotta' or 'destinazione' or 'direzione')
-            "^La rotta attuale della nave e' verso la terra.^
+              font off;
+              return true;
+          }
+          else if(glyph == 'rotta' or 'destinazione' or 'direzione') {
+            font off;
+            style underline;
+            print "^La rotta attuale della nave e' verso la terra.^
             ATTENZIONE! Angolo di avvicinamento troppo ripido^.
             Aggiustare rotta, la nave non resistera' al rientro in
             atmosfera.^";
-          else if(glyph == 'avaria')
-            "^ANALISI IN CORSO...^^
+            font on;
+            return true;
+          }
+          else if(glyph == 'avaria') {
+            font off;
+            style underline;
+            print "^ANALISI IN CORSO...^^
               L'avaria e' circoscritta alla zona dei motori.^
               Perdita di potenza imminente, motori spenti.^
               Impossibile riattivare in remoto.^
               Necessarie operazioni manuali.^";
-          else if(consult_words == 3 && w1 == 'sblocco' or 'sblocca' or 'apri' && w2 == 'porte' or 'portelloni' or 'porta' or 'portellone')
-            "^Tutte le porte della nave sono state sbloccate.^";
-          else
+              font off;
+              return true;
+          }
+          else if(consult_words == 3 && w1 == 'sblocco' or 'sblocca' or 'apri' && w2 == 'porte' or 'portelloni' or 'porta' or 'portellone') {
+            font off;
+            style underline;
+            print "^Tutte le porte della nave sono state sbloccate.^";
+            font on;
+            return true;
+          }
+          else {
             "Non hai trovato niente su questo.";
+          }
 
           !switch(glyph)
           !{
@@ -547,7 +573,7 @@ Porta portello_motori "portellone sala motori"
 
 [ Initialise;
  Lookmode = 2;
- location = sala_criogenica;
+ location = sala_comando;
  "Terra - Sistema Solare - Anno 3221^
  L'umanita' ha conquistato lo spazio, colonizzando altri pianeti, i viaggi spaziali
  sono all'ordine del giorno cosi' come le nuove rotte commerciali tra pianeti.
