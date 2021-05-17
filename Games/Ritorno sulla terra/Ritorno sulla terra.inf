@@ -569,7 +569,7 @@ Porta portello_motori "portellone sala motori"
 
 [ Initialise;
  Lookmode = 2;
- location = sala_comando;
+ location = sala_criogenica;
  "Terra - Sistema Solare - Anno 3221^
  L'umanita' ha conquistato lo spazio, colonizzando altri pianeti, i viaggi spaziali
  sono all'ordine del giorno cosi' come le nuove rotte commerciali tra pianeti.
