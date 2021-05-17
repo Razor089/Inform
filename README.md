@@ -31,3 +31,10 @@ Creare una nuova Avventura
 
  I file `compile.sh` e `compile_glux.sh` vengono creati in automatico da `new_project.sh` e sono
  messi nella cartella con il nome dell'avventura scelta all'interno della cartella `Games/`.
+
+Contatti
+--------
+
+ Autore: *Cosimo Davide Viggiano*  
+ Mail: *cosimod089@gmail.com*  
+ Facebook: *[facebook.com/cosimo.davide](facebook.com/cosimo.davide)*
