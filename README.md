@@ -18,8 +18,8 @@ Repository per le mie avventure testuali
     Balin nelle miniere di Moria e sul perché non se ne  
     hanno più notizie.*
 
- Creare una nuova Avventura
- --------------------------
+Creare una nuova Avventura
+--------------------------
  Nella Repository ci sono tutte le librerie necessarie per scrivere le avventure testuali,
  più alcuni shell scripts scritti per agevolare nella creazione delle cartelle di progetto
  e compilazione.
