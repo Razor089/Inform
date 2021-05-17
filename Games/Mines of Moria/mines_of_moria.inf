@@ -1,0 +1,381 @@
+!% -SD
+!-------------------------------------
+Constant Story "Le miniere di Moria";
+Constant Headline
+    "^^Avventura testuale a cura di Cosimo Davide Viggiano.^^";
+Release 1;
+
+Include "Parser";
+Include "VerbLib";
+Include "Replace";
+
+!--------------------------------------
+! Classi
+
+Class Room
+  with before[;
+    Listen: print_ret "Senti solo il rumore dei tuoi passi sulla pietra. Sembra tutto tranquillo.";
+    Smell: print_ret "Senti tutt'intorno un forte odore di aria ammuffita, dovuto all'umidit@`a e forse anche a qualcosa in decomposizione...";
+  ];
+    
+Class Bridge 
+  with before [;
+    Take,Pull,Push,PushDir:
+      print_ret "Perch@'e mai dovresti farlo? Inoltre @`e impossibile.";],
+    has static scenery;
+    
+Class Scenario
+  with before[;
+      Take,Pull,PushDir,Push:
+        print_ret "Non serve a nulla e poi non puoi perdere tempo in queste follie.";
+    ],
+    has scenery;
+    
+Class Prop
+  with before[;
+    default:
+      print_ret "Non sarebbe di alcuna utilit@`a.";
+  ],
+  has scenery;
+    
+Class Olio
+  with name 'boccetta' 'olio' 'ricarica',
+    description[;
+      print "Una piccola boccetta con dentro olio per lanterne.";
+    ],
+    has female;
+!--------------------------------------
+! Oggetti
+
+Room davanti_la_montagna "Montagne Nebbiose"
+    with description [; 
+                        "^Sei ai piedi delle grandi Montagne Nebbiose, intorno a te non c'@`e anima viva.
+                        E' una landa piuttosto desolata e l'aria @`e abbastanza fresca, davanti a te vedi
+                        una piccola buia apertura nella roccia, quasi nascosta. Dovrebbe essere l'ingresso Est 
+                        per le miniere di Moria o come piace a te, Khazad-dum: il regno dei nani.^";
+                    ],
+        before[;
+          Listen: print_ret "In lontananza senti il verso di alcuni uccelli e il vento che soffia.";
+          Smell: print_ret "Non c'@`e niente di fresco e puro come l'aria di montagna.";
+        ],
+    n_to [; <<Enter apertura>>;],
+    cant_go "Al momento non puoi andare da nessuna parte",
+    has light;
+
+Room apertura "apertura"
+  with name 'passaggio' 'fessura' 'apertura',
+  article "una",
+  description [; 
+         print "Avvicinandoti noti che quella che sembrava una stretta apertura nella roccia
+          @`e effettivamente il passaggio che porta all'ingresso di Khazad-dum e non @`e neanche tanto stretto come pensavi.";],
+  before [;
+          Enter:
+            if(location == davanti_la_montagna){
+              print "^Attraversi il passaggio che ti conduce dentro la montagna.^";
+              PlayerTo(ponte_di_khazaddum);
+            } else {
+              print "^Attraversi il passaggio che ti conduce fuori dalla montagna.^";
+              PlayerTo(davanti_la_montagna);
+            }
+            return true;
+  ],
+  found_in davanti_la_montagna ponte_di_khazaddum,
+  has female enterable scenery;
+
+
+Room ponte_di_khazaddum "Ponte di Khazad-dum"
+  with description [;
+   print "^Sei sul limite di un precipizio molto profondo, dall'altro lato puo vedere l'ingresso a Khazad-dum.
+    A pochi passi davanti a te si vede uno stretto ponte di pietra che collega i due lati, passando proprio su quella immensa voragine.
+    A nord c'@`e l'ingresso orientale mentre a sud, dietro di te, c'@`e il passaggio che conduce all'esterno.^";],
+    before [;
+      Go: if(location == thedark && noun ~= s_obj){
+        deadflag = 1;
+        print_ret "Dopo appena due passi senti mancare la terra sotto i piedi e cadi nel vuoto..";
+        };
+      Smell: print_ret "Puoi sentire l'aria fresca che arriva dal passaggio nella montagna.";
+      ],
+  s_to [;<<Enter apertura>>;],
+  n_to [; <<Enter ponte>>;],
+  cant_go "Non puoi andare l@`i";
+
+Bridge ponte "ponte" ponte_di_khazaddum
+  with name 'ponte' 'di' 'pietra',
+    description [;
+      print "Il famoso ponte di Khazad-dum, che collega l'ingresso della montagna all'entrata della citt@`a.
+        Nonostante sembri troppo stretto e fragile in realt@`a fu costruito apposta in questo modo come ulteriore difesa,
+        infatti qualsiasi esercito che volesse attraversarlo sarebbe costretto a farlo in fila indiana, facilitando il compito ai nani a difesa delle porte.";],
+    before[;
+      Enter: 
+        print "^Attraversi cautamente il ponte.^";
+        PlayerTo(porte_orientali);
+        return true;
+    ],
+    has male;
+    
+Object voragine "voragine" ponte_di_khazaddum
+  with name 'voragine' 'precipizio' 'baratro' 'buio',
+    description [;
+      print "Una immensa e oscura voragine si apre tra le due parti interne della montagna.
+      Nessuno ha mai scoperto quanto sia profonda e se c'@`e un fondo.";],
+      before [;
+        Take,Push,Pull,PushDir,Attack: print_ret "Credo che l'aria rarefatta della montagna ti abbia dato alla testa.";
+        Jump,JumpOver:
+              deadflag = 1;
+              print_ret "Salti nel vuoto. Nessuno sapr@`a mai che cosa @`e successo nelle miniere di Moria...";
+      ],
+  has female scenery;
+
+
+Room porte_orientali "Porte Orientali"
+  with description[;
+    print "^Sei in un ampio ingresso, ora l'ambiente mostra segni di civilt@`a, come le pareti lisce, il soffitto altissimo con delle enormi vetrate.
+      Di fronte a te, a nord, ci sono le porte della citt@`a che conducono all'interno, a sud c'@`e il ponte.^";
+    ],
+    s_to ponte_di_khazaddum,
+    n_to sala_scale,
+    cant_go "Non puoi andare in quella direzione.";
+    
+Scenario soff "soffitto" porte_orientali
+  with name 'tetto' 'soffitto',
+    description [;
+      print "Da dove ti trovi non riesci a vedere bene se @`e solo roccia oppure @`e finemente lavorato, come ogni cosa fatta dai nani.
+        L'unica cosa certa @`e che @`e davvero alto e ti stupisci di come sia stato possibile arrivarci.";
+      ],
+    has male;
+    
+Scenario porte "porte" porte_orientali
+  with name 'porte',
+    article "le",
+    description[;
+      print "Le grandi porte di Khazad-dum, un tempo si ergevano alte e massicce a difesa del regno dei nani.
+        Ora invcece sono solo rovine e macerie disposte ai lati dell'apertura. Sui lati delle porte ancora si 
+        possono scorgere le rune che erano state incise dai loro creatori.";
+    ],
+    has female pluralname;
+
+
+Room sala_scale "Grande Scalinata"
+  with description[;
+    print "^Davanti a te ci sono delle enormi scale a chiocciola che portano al piano superiore. A est noti una piccola stanza, 
+    mentre ad ovest vedi un piccolo passaggio. Dietro di te c'@`e l'ingresso orientale.^";
+  ],
+  s_to porte_orientali,
+  w_to "La via @`e bloccata.",
+  e_to magazzino,
+  n_to [;<<Climb scala>>;],
+  u_to [;<<Climb scala>>;],
+  cant_go "Non puoi andare l@`i";
+
+Scenario "piccola stanza" sala_scale
+  with name 'piccola' 'stanza',
+    before[;
+      Examine,Look:
+        print_ret "Da qui non riesci a vedere molto, ma sembra che non ci sia nulla all'interno.";
+      default:
+        print_ret "Sei troppo lontano per fare qualsiasi cosa";
+    ],
+    has female;
+  
+Scenario scala "scala"
+  with description[;
+    print "Delle enormi scale in pietra che riempiono tutta la stanza e portano in alto, al centro di esse c'@`e un baratro. Se cadi da l@`i
+    sicuramente sar@`a la fine della tua avventura.";
+  ],
+  name 'scala' 'gradino' 'scale//p' 'gradini//p',
+  before[;
+    Climb:
+      if(location == sala_grande){
+        print_ret "Le scale arrivano fin qui.";
+      }
+      print "^Sali le scale.^";
+      playerTo(sala_grande);
+      return true;
+    Exit:
+      if(location == sala_scale){
+        print_ret "Sei gi@`a alla fine delle scale.";
+      }
+      print "^Scendi le scale.^";
+      playerTo(sala_scale);
+      return true;
+  ],
+  found_in sala_scale sala_grande,
+  has female;
+
+Room magazzino "Piccola Stanza"
+  with description[;
+    print "^Una piccola stanza spoglia e piena di ragnatele. Per terra ci sono dei segni.
+      A ovest c'@`e l'entrata da dove sei venuto.^";
+  ],
+  w_to sala_scale,
+  cant_go "Non ci sono uscite qu@`i.";
+
+Prop ragnatele "ragnatele" magazzino
+  with name 'ragnatela' 'ragnatele//p',
+    article "delle",
+    before[;
+      Examine: print_ret "Le ragnatele sono grosse e spesse, saranno decisamente anni che non viene qualcuno a pulire."; ;
+    ],
+    has female;
+    
+Prop segni "segni" magazzino
+  with name 'segno' 'segni//p' 'pavimento',
+    article "dei",
+    before[;
+      Examine: print_ret "Osservando bene noti che sono stati lasciati da qualcosa di pesante che veniva trascinato.
+        Sicuramente dai pesanti barili o armi. Probabilmente la stanza serviva da magazzino per le guardie.";
+    ],
+    has male;
+    
+
+Room sala_grande "Sala Grande"
+  with description[;
+      print "^Davanti a te si apre forse la sala pi@`u grande e immensa che tu abbia mai visto.
+        Sei circondato da numerose colonne altissime. A sud ci sono delle scale che portano gi@`u. 
+        A nord-ovest e nord-est intravedi due arcate. A est e a sud-ovest ci sono due corridoi.^";
+    ],
+    s_to [;<<Exit scala>>;],
+    d_to [;<<Exit scala>>;],
+    nw_to sala_marzabul,
+    cant_go "Non puoi andare l@`i.";
+
+Scenario colonna "colonne"
+  with name 'colonna' 'colonne//p',
+    description[;
+      print "Puoi notare la magnificenza dell'architettura nanica in queste colonne squadrate, che si innalzano
+        cos@`i in alto da non riuscirne a vedere la fine. La pietra @`e finemente lavorata, hai sempre avuto un profondo moto 
+        di orgoglio nell'ammirare le opere della tua razza.";
+    ],
+    has female;
+    
+    
+Room sala_marzabul "Sala di Marzabul"
+  with description[;
+    print "^Sei in quello che sembra un archivio. Al centro della stanza vedi una grossa tomba di pietra illuminata da un raggio di luce.
+      In fondo alla sala ci sono degli scaffali e delle scrivanie.";
+      if(self hasnt visited){
+        print "^Sembra che si sia svolta una cruenta battaglia qui. Tutto intorno ci sono cadaveri e scheletri.
+          Alcune parti della stanza sono state distrutte, per terra ci sono pezzi di pietre ovunque.^";
+      }
+      print "A sud-est l'unica uscita porta alla sala grande.^";
+    ],
+    se_to sala_grande,
+    has light;
+
+Object scaffali "scaffali" sala_marzabul
+  with name 'scaffale' 'libreria' 'scaffali//p' 'librerie//p' 'archivi'
+    'mensola' 'mensole//p',
+    description[;
+      print "Le mensole sono piene di pergamene e libri. Forse ci sono notizie di quello che @`e successo qui.";
+      give pergamena ~concealed;
+      give pergamena ~absent;
+    ],
+    has static supporter scenery;
+    
+Object pergamena "pergamena" scaffali
+  with name 'pergamena' 'rotolo' 'di' 'pergamene',
+    description[;
+      print "Le pergamene sono coperte di polvere e molto fragili. Solo una ti sembra messa meglio delle altre.";
+    ],
+    before[;
+      Leggi:
+        print_ret ".";
+    ],
+  has female concealed absent;
+
+!--------------------------------------
+! Oggetti recuperabili/trovabili/etc...
+
+Object barile "barile"
+  with name 'barile' 'cesto' 'barili//p' 'cesti//p',
+    article "un",
+    plural "barili",
+    description[;
+      print_ret "Un normale barile di legno usato per contenere svariate cose, dal cibo alle armi.";
+    ],
+    before[;
+      Take,Pull,PushDir,Push: print_ret "Non sarebbe di alcuna utilit@`a.";
+    ],
+    found_in magazzino sala_marzabul,
+    has male container openable supporter;
+
+
+!--------------------------------------
+! Oggetti del giocatore
+  Object lanterna "lanterna"
+    with description [;
+      print "Una normalissima lanterna ad olio, fondamentale nelle esplorazioni.";],
+      name 'lanterna' 'lampada' 'ad' 'olio',
+      after[;
+        SwitchOn: give self light;
+        SwitchOff: give self ~light;],
+      before[;
+        Drop:
+          if(second == voragine){
+            remove lanterna;
+            print_ret "Preso da una improvvisa curiosit@`a lanci la lanterna nel vuoto e osservi il tenue bagliore che viene 
+              inghiottito dall'oscurit@`a.
+              Non hai udito alcun suono, non certo una bella mossa..";
+          };],
+      oil_charge 100,
+      has female switchable;
+      
+  Object corda "corda"
+    with description[;
+      print "Una robusta corda dai vari utilizzi.";],
+      name 'corda',
+      has female;
+!--------------------------------------
+! Entry point routines
+
+[TalkSub; 
+  if(noun == player){
+    print_ret "Se inizi a parlare da solo vuol dire che stai perdendo la testa.";
+    }];
+    
+[LeggiSub;
+  print_ret "Non c'@`e scritto niente;";
+];
+
+[Initialise;
+    lookmode = 1;
+    location = davanti_la_montagna;
+    move lanterna to Player;
+    move corda to Player;
+];
+
+[InScope person;
+  if(person == player && location == thedark && lanterna.real_location == player.real_location
+    && barile.real_location == player.real_location){
+    PlaceInScope(lanterna);
+    PlaceInScope(barile);
+  }
+  return false;
+];
+
+!--------------------------------------
+! Grammar
+Include "ItalianG";
+
+Extend 'parla' first
+  * 'a'/'ad'/'al'/'all^'/'allo'/'alla'/'al'/
+      'agli'/'ai'/'alle'/'con' creature 
+                              -> Talk;
+
+Verb 'getta'
+  * noun -> Drop
+  * noun 'nel'/'nella'/'contro'/'verso' noun
+  -> Drop;
+  
+Extend 'lancia' first
+ * noun -> Drop
+ * noun 'nel'/'nella'/'contro'/'verso' noun
+  -> Drop;
+  
+Extend 'salta' first
+  * noun -> Jump
+  * 'nella'/'nel'/'verso'/'contro' noun
+    -> Jump;
+    
+Extend 'leggi' first
+  * noun -> Leggi;
