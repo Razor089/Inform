@@ -1,0 +1,118 @@
+!===============================================
+! Story
+
+Constant Story "Assalto al Castello";
+Constant Headline "^^Nuova avventura testuale di Cosimo Davide viggiano^^";
+Release 1; Serial "290823";
+
+!===============================================
+! Include
+
+include "Parser";
+
+!===============================================
+! Verbi Personalizzati
+
+include "VerbLib";
+include "Replace";
+
+!===============================================
+! Classi 
+
+Class Room
+    has light;
+
+Class StanzaCastello
+    with
+    cant_go "Ci sono solo mura e pietre",
+    has light;
+
+Class Porta
+    has static door openable lockable locked;
+
+Class Prop 
+    has scenery;
+
+!===============================================
+! Stanze
+
+Room davanti_castello "Davanti al castello"
+    with description "Ti trovi in un ampio spazio aperto, davanti a te, a nord, si staglia
+                      un grande cancello aperto, in fondo al quale, vedi un enorme castello.",
+        n_to porta_castello;
+
+StanzaCastello porta_castello "Portone del castello"
+    with description "Davanti a te vedi l'enorme portone del castello, finemente decorato
+                      con motivi in ferro. A sud vedi il sentiero che porta al cancello del castello.",
+    s_to davanti_castello,
+    n_to portone_castello;
+
+StanzaCastello salone_castello "Salone del castello"
+    with description "Ti ritrovi nella sala grande del castello, un'ampia sala con drappi e tessuti tutto intorno, quadri, candele, candelabri.
+                      A sud c'e' l'uscita, mentre nelle altre direzioni ci sono delle stanze. Al centro della sala vedi delle enormi scalinate
+                      che portano al piano di sopra.",
+    w_to armeria,
+    s_to portone_castello;
+
+StanzaCastello armeria "Armeria del castello"
+    with description "La sala in cui ti trovi e' piena zeppa di scaffali e rastrelliere per le armi. Sembra abbandonata da molto tempo.",
+    e_to salone_castello;
+    
+
+Porta portone_castello "Portone del castello"
+    with name 'portone' 'massiccio' 'porta' 'castello',
+         description "Il massiccio portone del castello, il legno di cui e' formato sembra molto antico
+                      ma anche molto spesso e impenetrabile",
+         when_closed "Il portone e' saldamente chiuso",
+         when_open "Il portone di legno massiccio e' aperto e si intravede l'interno del castello",
+         found_in porta_castello,
+         with_key chiave_antica,
+         before [ks; 
+             Open: 
+                if (chiave_antica in player) {
+                    ks = keep_silent;
+                    keep_silent = true;
+                    <Unlock self chiave_antica>;
+                    keep_silent = ks; 
+                    print "Usando la vecchia chiave arrugginita riesci ad aprire il pesante portone";
+                    return true;
+                }],
+         after [; Unlock: give self open; ],
+         door_to [;  if(self in porta_castello) return salone_castello; return porta_castello; ],
+         door_dir [; if(self in porta_castello) return n_to; return s_to; ];
+
+
+!===============================================
+! Oggetti
+
+Object chiave_antica "chiave antica"
+    with name 'chiave' 'antica',
+    found_in davanti_castello,
+    has female;
+
+Prop rastrelliere "rastrelliere" armeria
+    with name 'rastrelliera' 'rastrelliere' 'scaffali',
+        article "le",
+        description "Gli scaffali e le rastrelliere un tempo dovevano essere stati pieni di armi e munizioni, 
+                     ma adesso l'unica cosa che abbonda e' la polvere. Solo su uno scaffale e' rimasta un'unica spada.",
+        has female pluralname;
+
+Object spada "spadone a due mani" armeria
+    with name 'spada' 'spadone' 'due' 'mani',
+        article "uno",
+        description "Un spadone a due mani di buona fattura. Nonostante le intemperie, la lama ha conservato il filo
+                     e sembra essere molto tagliente.",
+        taken false,
+        after [; Take: if(self.taken == false) score = score + 10; self.taken = true; ];
+
+!===============================================
+! Routines
+
+[Initialise;
+    Lookmode = 2; 
+    location = davanti_castello; ];
+
+!===============================================
+! Lingua
+
+include "ItalianG";
